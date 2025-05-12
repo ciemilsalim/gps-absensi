@@ -9,6 +9,21 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+    public function index()
+    {
+        $attendances = Auth::user()->attendances()->orderByDesc('date')->get();
+        return view('attendance.index', compact('attendances'));
+    }
+
+    public function adminIndex()
+    {
+        $attendances = \App\Models\Attendance::with('user')->orderByDesc('date')->get();
+
+        return view('admin.attendance.index', compact('attendances'));
+    }
+
+
+
     // Koordinat kantor (ganti sesuai lokasi kantor Anda)
     protected $officeLat = 1.1719015;  // Contoh: Jakarta
     protected $officeLng = 121.4259835;

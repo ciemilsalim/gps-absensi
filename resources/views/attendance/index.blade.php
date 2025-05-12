@@ -19,6 +19,10 @@
         </div>
     @endif
 
+    <p id="gps-status" class="text-muted"></p>  
+
+    {{-- Tampilkan lokasi --}}
+
     {{-- Check-In Form --}}
     <form id="checkin-form" method="POST" action="{{ route('attendance.checkin') }}">
         @csrf
@@ -37,6 +41,43 @@
         <button type="submit" class="btn btn-danger">Check-Out</button>
     </form>
 </div>
+
+<div class="container">
+    <h4>Data Absensi Saya</h4>
+
+    @if ($attendances->isEmpty())
+        <p>Belum ada data absensi.</p>
+    @else
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Check-In</th>
+                    <th>Lokasi Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Lokasi Check-Out</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($attendances as $attendance)
+                <tr>
+                    <td>{{ $attendance->date }}</td>
+                    <td>{{ $attendance->check_in_time ?? '-' }}</td>
+                    <td>
+                        {{ $attendance->check_in_lat ?? '-' }},
+                        {{ $attendance->check_in_lng ?? '-' }}
+                    </td>
+                    <td>{{ $attendance->check_out_time ?? '-' }}</td>
+                    <td>
+                        {{ $attendance->check_out_lat ?? '-' }},
+                        {{ $attendance->check_out_lng ?? '-' }}
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+</div>
 @endsection
 
 
@@ -54,6 +95,9 @@
         document.getElementById('checkin-lng').value = lng;
         document.getElementById('checkout-lat').value = lat;
         document.getElementById('checkout-lng').value = lng;
+
+        document.getElementById('gps-status').textContent = `Lokasi: ${latitude}, ${longitude}`;
+
     }
 
     function getLocationAndFillForm() {

@@ -17,12 +17,14 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/attendance', function () {
-        return view('attendance.index');
-    })->name('attendance.index');
+    Route::get('/attendance', [App\Http\Controllers\AttendanceController::class, 'index'])->name('attendance.index');
     
     Route::post('/attendance/checkin', [AttendanceController::class, 'checkIn'])
          ->name('attendance.checkin');
     Route::post('/attendance/checkout', [AttendanceController::class, 'checkOut'])
          ->name('attendance.checkout');
+});
+
+Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->group(function () {
+    Route::get('/admin/attendances', [AttendanceController::class, 'adminIndex'])->name('admin.attendance.index');
 });

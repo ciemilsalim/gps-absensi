@@ -73,6 +73,14 @@
         </nav>
 
         <main class="py-4">
+            @if(auth()->check())
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.attendance.index') }}">Data Absensi Pegawai</a>
+                @else
+                    <a href="{{ route('attendance.index') }}">Absensi Saya</a>
+                @endif
+            @endif
+
             @yield('content')
         </main>
     </div>
