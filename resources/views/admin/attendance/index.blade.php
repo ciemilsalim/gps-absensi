@@ -18,26 +18,48 @@
         </div>
     @endif
 
-    {{-- Peta --}}
-    <div id="map" style="height: 500px; border: 1px solid #ccc;"></div>
+    {{-- Filter User --}}
+    <form method="GET" class="mb-3" action="{{ route('admin.attendance.index') }}">
+        <div class="row">
+            <div class="col-md-4">
+                <select name="user_id" class="form-control" onchange="this.form.submit()">
+                    <option value="">-- Semua User --</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </form>
 
-    {{-- Tabel --}}
-    <hr>
-    <h5 class="mt-4">Data Absensi</h5>
-    <table class="table table-bordered">
+    {{-- Map --}}
+    <div id="map" style="height: 500px;"></div>
+
+    {{-- Tabel Absensi --}}
+    <table class="table mt-4 table-bordered">
         <thead>
             <tr>
                 <th>Nama</th>
-                <th>Waktu</th>
-                <th>Lokasi (Lat, Lng)</th>
+                <th>Tanggal</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($attendances as $attendance)
+            @foreach ($attendances as $a)
                 <tr>
-                    <td>{{ $attendance->user->name ?? '-' }}</td>
-                    <td>{{ $attendance->created_at }}</td>
-                    <td>{{ $attendance->check_in_lat }}, {{ $attendance->check_in_long }}</td>
+                    <td>{{ $a->user->name }}</td>
+                    <td>{{ $a->date }}</td>
+                    <td>
+                        {{ $a->check_in_time }}<br>
+                        ({{ $a->check_in_lat }}, {{ $a->check_in_long }})
+                    </td>
+                    <td>
+                        {{ $a->check_out_time }}<br>
+                        ({{ $a->check_out_lat }}, {{ $a->check_out_long }})
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -54,12 +76,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Inisialisasi peta
-            const map = L.map('map').setView([1.1719015, 121.4259835], 10); // posisi awal
+            const map = L.map('map').setView([1.1719015, 121.4259835], 20); // posisi awal
 
             // Tambahkan tile layer OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors'
             }).addTo(map);
+
+            // Tambahkan marker ke lokasi user
+            L.circle([1.1719015, 121.4259835], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 100
+            }).addTo(map)
+            .bindPopup("Area Absensi.");
 
             // Ambil data absensi dari server
             const attendances = @json($attendances);

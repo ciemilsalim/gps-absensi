@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -15,11 +16,33 @@ class AttendanceController extends Controller
         return view('attendance.index', compact('attendances'));
     }
 
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        // $attendances = \App\Models\Attendance::with('user')->orderByDesc('date')->get();
-        $attendances = Attendance::with('user')->latest()->get();
-        return view('admin.attendance.index', compact('attendances'));
+        // Cek apakah user adalah admin
+        if (!Auth::user()->isAdmin()) {
+            return redirect()->route('attendance.index')->withErrors(['Anda tidak memiliki akses ke halaman ini.']);
+        }
+
+        // $query = Attendance::with('user')->latest();
+        $query = Attendance::with('user')->latest();
+
+        //filter berdasarkan tanggal hari ini
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->date);
+        } else {
+            $query->whereDate('date', Carbon::today());
+        }
+        
+        // Filter user jika dipilih
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        // $attendances = $query->get();
+        $attendances = $query->orderByDesc('date')->get();
+        $users = User::orderBy('name')->get();
+
+        return view('admin.attendance.index', compact('attendances', 'users'));
     }
 
 
