@@ -27,4 +27,6 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->group(function () {
     Route::get('/admin/attendances', [AttendanceController::class, 'adminIndex'])->name('admin.attendance.index');
+    Route::get('/admin/attendance/export-pdf', [AttendanceController::class, 'exportPdf'])->name('admin.attendance.export-pdf');
+
 });

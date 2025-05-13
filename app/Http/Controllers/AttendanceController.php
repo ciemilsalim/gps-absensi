@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceController extends Controller
 {
@@ -53,6 +54,30 @@ class AttendanceController extends Controller
 
         return view('admin.attendance.index', compact('attendances', 'users'));
     }
+
+
+    public function exportPdf(Request $request)
+    {
+        $query = Attendance::with('user')->latest();
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->end_date);
+        }
+
+        $attendances = $query->get();
+
+        $pdf = pdf::loadView('admin.attendance.pdf', compact('attendances'));
+        return $pdf->download('laporan-absensi.pdf');
+    }
+
 
 
 

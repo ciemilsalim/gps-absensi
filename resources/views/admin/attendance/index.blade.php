@@ -44,6 +44,15 @@
             </div>
         </div>
     </form>
+    
+    {{-- Export PDF --}}
+    <form method="GET" action="{{ route('admin.attendance.export-pdf') }}" class="mt-2">
+        <input type="hidden" name="user_id" value="{{ request('user_id') }}">
+        <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+        <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+        <button type="submit" class="btn btn-danger">Export PDF</button>
+    </form>
+
 
     {{-- Map --}}
     <div id="map" style="height: 500px;"></div>
@@ -91,7 +100,9 @@
 
             // Tambahkan tile layer OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors'
+                attribution: '&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+                minZoom: 10,
             }).addTo(map);
 
             // Tambahkan marker ke lokasi user
