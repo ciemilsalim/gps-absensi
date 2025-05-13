@@ -99,16 +99,34 @@
 
     function initMap(lat, lng) {
         // Inisialisasi peta
-        const map = L.map('map').setView([1.1719015, 121.4259835], 10); // posisi awal
+        const map = L.map('map').setView([1.1719015, 121.4259835], true); // posisi awal
+
+        // Buat ikon kustom
+            const pin = L.icon({
+                iconUrl: '/my-pin.png',
+                iconSize: [32, 32], // ukuran ikon [lebar, tinggi]
+                iconAnchor: [16, 32], // posisi titik bawah pin
+                popupAnchor: [0, -32] // posisi popup relatif terhadap ikon
+            });
+        
+        L.circle([1.1719015, 121.4259835], {
+                color: 'green',
+                fillColor: '#1bc6',
+                fillOpacity: 0.5,
+                radius: 100
+            }).addTo(map)
+            .bindPopup("Area Absensi.");
 
         // Tambahkan tile dari OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        }).addTo(map);
+            maxZoom: 20,
+            minZoom: 18,})
+            .addTo(map);
 
         
         // Tambahkan marker ke lokasi user
-        marker = L.marker([lat, lng]).addTo(map)
+        marker = L.marker([lat, lng], {icon:pin} ).addTo(map)
             .bindPopup("Lokasi Anda Saat Ini").openPopup();
     }
 

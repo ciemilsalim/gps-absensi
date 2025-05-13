@@ -105,7 +105,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Inisialisasi peta
-            const map = L.map('map').setView([1.1719015, 121.4259835], 20); // posisi awal
+            const map = L.map('map').setView([1.1719015, 121.4259835], true); // posisi awal
 
              // Buat ikon kustom
             const checkin = L.icon({
@@ -127,13 +127,14 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors',
                 maxZoom: 19,
-                minZoom: 15,
+                minZoom: 18,
             }).addTo(map);
 
-            // Tambahkan marker ke lokasi user
+            // Tambahkan Area absensi
+            // Buat lingkaran untuk area absensi
             L.circle([1.1719015, 121.4259835], {
-                color: 'red',
-                fillColor: '#f03',
+                color: 'green',
+                fillColor: '#1bc6',
                 fillOpacity: 0.5,
                 radius: 100
             }).addTo(map)
@@ -144,17 +145,6 @@
 
             attendances.forEach(item => {
                 if (item.check_in_lat && item.check_in_long) {
-                    // const lat = parseFloat(item.check_in_lat);
-                    // const lng = parseFloat(item.check_in_long);
-
-                    // const popup = `
-                    //     <b>${item.user?.name ?? 'Tidak diketahui'}</b><br>
-                    //     Waktu: ${item.created_at}
-                    // `;
-
-                    // L.marker([lat, lng])
-                    //     .addTo(map)
-                    //     .bindPopup(popup);
                     const attendances = @json($attendances);
 
                     attendances.forEach(item => {
