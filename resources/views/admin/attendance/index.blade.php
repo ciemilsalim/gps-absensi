@@ -44,7 +44,7 @@
             </div>
         </div>
     </form>
-    
+
     {{-- Export PDF --}}
     <form method="GET" action="{{ route('admin.attendance.export-pdf') }}" class="mt-2">
         <input type="hidden" name="user_id" value="{{ request('user_id') }}">
@@ -52,6 +52,15 @@
         <input type="hidden" name="end_date" value="{{ request('end_date') }}">
         <button type="submit" class="btn btn-danger">Export PDF</button>
     </form>
+    
+    {{-- Export Excel --}}
+    <form method="GET" action="{{ route('admin.attendance.export-excel') }}" class="mt-2">
+        <input type="hidden" name="user_id" value="{{ request('user_id') }}">
+        <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+        <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+        <button type="submit" class="btn btn-success">Export Excel</button>
+    </form>
+
 
 
     {{-- Map --}}
@@ -98,11 +107,27 @@
             // Inisialisasi peta
             const map = L.map('map').setView([1.1719015, 121.4259835], 20); // posisi awal
 
+             // Buat ikon kustom
+            const checkin = L.icon({
+                iconUrl: '/pin-checkin.png',
+                iconSize: [32, 32], // ukuran ikon [lebar, tinggi]
+                iconAnchor: [16, 32], // posisi titik bawah pin
+                popupAnchor: [0, -32] // posisi popup relatif terhadap ikon
+            });
+
+            // Buat ikon kustom
+            const checkout = L.icon({
+                iconUrl: '/pin-checkout.png',
+                iconSize: [32, 32], // ukuran ikon [lebar, tinggi]
+                iconAnchor: [16, 32], // posisi titik bawah pin
+                popupAnchor: [0, -32] // posisi popup relatif terhadap ikon
+            });
+
             // Tambahkan tile layer OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors',
                 maxZoom: 19,
-                minZoom: 10,
+                minZoom: 15,
             }).addTo(map);
 
             // Tambahkan marker ke lokasi user
@@ -137,13 +162,13 @@
                         const date = item.date;
 
                         if (item.check_in_lat && item.check_in_long) {
-                            L.marker([item.check_in_lat, item.check_in_long])
+                            L.marker([item.check_in_lat, item.check_in_long], { icon: checkin })
                                 .addTo(map)
                                 .bindPopup(`<b>${name}</b><br>Check-In<br>${date} ${item.check_in_time}`);
                         }
 
                         if (item.check_out_lat && item.check_out_long) {
-                            L.marker([item.check_out_lat, item.check_out_long])
+                            L.marker([item.check_out_lat, item.check_out_long], { icon: checkout })
                                 .addTo(map)
                                 .bindPopup(`<b>${name}</b><br>Check-Out<br>${date} ${item.check_out_time}`);
                         }

@@ -8,6 +8,8 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\AttendanceExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
@@ -55,7 +57,7 @@ class AttendanceController extends Controller
         return view('admin.attendance.index', compact('attendances', 'users'));
     }
 
-
+    //export pdf
     public function exportPdf(Request $request)
     {
         $query = Attendance::with('user')->latest();
@@ -76,6 +78,17 @@ class AttendanceController extends Controller
 
         $pdf = pdf::loadView('admin.attendance.pdf', compact('attendances'));
         return $pdf->download('laporan-absensi.pdf');
+    }
+
+    //eksport excel
+    public function exportExcel(Request $request)
+    {
+        $user_id = $request->user_id;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+
+        $export = new AttendanceExport($user_id, $start_date, $end_date);
+        return Excel::download($export, 'laporan-absensi.xlsx');
     }
 
 
