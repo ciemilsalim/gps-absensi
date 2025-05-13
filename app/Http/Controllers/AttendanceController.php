@@ -17,8 +17,8 @@ class AttendanceController extends Controller
 
     public function adminIndex()
     {
-        $attendances = \App\Models\Attendance::with('user')->orderByDesc('date')->get();
-
+        // $attendances = \App\Models\Attendance::with('user')->orderByDesc('date')->get();
+        $attendances = Attendance::with('user')->latest()->get();
         return view('admin.attendance.index', compact('attendances'));
     }
 

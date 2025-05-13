@@ -22,12 +22,13 @@
     <p id="gps-status" class="text-muted"></p>  
 
     {{-- Tampilkan lokasi --}}
+    <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
 
     {{-- Check-In Form --}}
     <form id="checkin-form" method="POST" action="{{ route('attendance.checkin') }}">
         @csrf
-        <input type="text" name="latitude" id="checkin-lat" title="Latitude lokasi check-in">
-        <input type="text" name="longitude" id="checkin-lng" title="longitude lokasi check-in">
+        <input type="hidden" name="latitude" id="checkin-lat" title="Latitude lokasi check-in">
+        <input type="hidden" name="longitude" id="checkin-lng" title="longitude lokasi check-in">
         <button type="submit" class="btn btn-success" id="btn-checkin">Check-In</button>
     </form>
 
@@ -36,8 +37,8 @@
     {{-- Check-Out Form --}}
     <form id="checkout-form" method="POST" action="{{ route('attendance.checkout') }}">
         @csrf
-        <input type="text" name="latitude" id="checkout-lat">
-        <input type="text" name="longitude" id="checkout-lng">
+        <input type="hidden" name="latitude" id="checkout-lat">
+        <input type="hidden" name="longitude" id="checkout-lng">
         <button type="submit" class="btn btn-danger">Check-Out</button>
     </form>
 </div>
@@ -80,57 +81,71 @@
 </div>
 @endsection
 
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    let lat = null;
-    let lng = null;
+    let map, marker;
 
-    function setLocationInputs(latitude, longitude) {
-        lat = latitude;
-        lng = longitude;
-        console.log("Koordinat diterima:", lat, lng);
-
-        // Masukkan ke hidden input
+    function setLocationInputs(lat, lng) {
         document.getElementById('checkin-lat').value = lat;
         document.getElementById('checkin-lng').value = lng;
         document.getElementById('checkout-lat').value = lat;
         document.getElementById('checkout-lng').value = lng;
+    }
 
-        document.getElementById('gps-status').textContent = `Lokasi: ${latitude}, ${longitude}`;
+    function initMap(lat, lng) {
+        // Inisialisasi peta
+        const map = L.map('map').setView([1.1719015, 121.4259835], 10); // posisi awal
 
+        // Tambahkan tile dari OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(map);
+
+        
+        // Tambahkan marker ke lokasi user
+        marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup("Lokasi Anda Saat Ini").openPopup();
     }
 
     function getLocationAndFillForm() {
-        if (!navigator.geolocation) {
-            alert("Browser tidak mendukung lokasi.");
-            return;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                setLocationInputs(lat, lng);
+                initMap(lat, lng);
+            }, function (error) {
+                alert("Gagal mendapatkan lokasi. Aktifkan GPS dan izinkan akses lokasi.");
+            });
+        } else {
+            alert("Browser tidak mendukung GPS.");
         }
-
-        navigator.geolocation.getCurrentPosition(function(position) {
-            setLocationInputs(position.coords.latitude, position.coords.longitude);
-        }, function(error) {
-            console.error("Error GPS:", error);
-            alert("Gagal mendapatkan lokasi. Pastikan izin lokasi aktif.");
-        });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         getLocationAndFillForm();
     });
 
-    document.getElementById('checkin-form').addEventListener('submit', function(e) {
-        if (!lat || !lng) {
+    document.getElementById('checkin-form').addEventListener('submit', function (e) {
+        if (!document.getElementById('checkin-lat').value) {
             e.preventDefault();
-            alert("Lokasi belum siap. Mohon tunggu beberapa detik...");
+            alert("Lokasi belum didapatkan. Mohon tunggu sebentar.");
         }
     });
 
-    document.getElementById('checkout-form').addEventListener('submit', function(e) {
-        if (!lat || !lng) {
+    document.getElementById('checkout-form').addEventListener('submit', function (e) {
+        if (!document.getElementById('checkout-lat').value) {
             e.preventDefault();
-            alert("Lokasi belum siap. Mohon tunggu beberapa detik...");
+            alert("Lokasi belum didapatkan. Mohon tunggu sebentar.");
         }
     });
 </script>
+
+
 
 
