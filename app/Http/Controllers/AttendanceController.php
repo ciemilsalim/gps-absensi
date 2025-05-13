@@ -27,10 +27,19 @@ class AttendanceController extends Controller
         $query = Attendance::with('user')->latest();
 
         //filter berdasarkan tanggal hari ini
-        if ($request->filled('date')) {
-            $query->whereDate('date', $request->date);
-        } else {
-            $query->whereDate('date', Carbon::today());
+        // if ($request->filled('date')) {
+        //     $query->whereDate('date', $request->date);
+        // } else {
+        //     $query->whereDate('date', Carbon::today());
+        // }
+
+        // Filter tanggal
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->end_date);
         }
         
         // Filter user jika dipilih

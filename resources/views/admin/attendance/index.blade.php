@@ -31,6 +31,17 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-md-3">
+                <label for="start_date">Dari Tanggal</label>
+                <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label for="end_date">Sampai Tanggal</label>
+                <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
         </div>
     </form>
 
