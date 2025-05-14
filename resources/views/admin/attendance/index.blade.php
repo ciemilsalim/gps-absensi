@@ -132,7 +132,7 @@
 
             // Tambahkan Area absensi
             // Buat lingkaran untuk area absensi
-            L.circle([1.1719015, 121.4259835], {
+            L.circle([1.1870718, 121.4182081], {
                 color: 'green',
                 fillColor: '#1bc6',
                 fillOpacity: 0.5,

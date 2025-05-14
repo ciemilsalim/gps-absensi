@@ -7,9 +7,10 @@ use App\Exports\AttendanceExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('/auth/login');
 });
 
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 
 Auth::routes();
