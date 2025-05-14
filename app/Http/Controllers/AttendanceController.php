@@ -95,8 +95,8 @@ class AttendanceController extends Controller
 
 
     // Koordinat kantor (ganti sesuai lokasi kantor Anda)
-    protected $officeLat = 1.1719015;  // Contoh: Jakarta
-    protected $officeLng = 121.4259835;
+    protected $officeLat = 1.1870718;  // Contoh: Jakarta
+    protected $officeLng = 121.4182081;
     protected $radius = 100; // meter
 
     // Rumus Haversine untuk hitung jarak GPS dalam meter

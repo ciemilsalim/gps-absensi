@@ -1,85 +1,72 @@
-@extends('layouts.app')
+@extends('layouts.user-app')
 
 @section('content')
-<div class="container">
-  <div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-5">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h4 class="text-center mb-4">Login</h4>
+<div class="login-form mt-1">
+  <div class="section">
+    <img src="{{ asset('assets/user/img/sample/photo/vector4.png') }}" alt="image" class="form-image" />
+  </div>
 
-          @if (session('status'))
-            <div class="alert alert-success">
-              {{ session('status') }}
-            </div>
-          @endif
+  <div class="section mt-1">
+    <h1>LOGIN</h1>
+    <h4>Isi form untuk masuk</h4>
+  </div>
 
-          <form method="POST" action="{{ route('login') }}">
-            @csrf
+  <div class="section mt-1 mb-5">
+    @if (session('status'))
+      <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
 
-            <!-- Email -->
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                class="form-control @error('email') is-invalid @enderror"
-                value="{{ old('email') }}"
-                required
-                autofocus
-              >
-              @error('email')
-                <div class="invalid-feedback">{{ $message }}</div>
-              @enderror
-            </div>
+    <form method="POST" action="{{ route('login') }}">
+      @csrf
 
-            <!-- Password -->
-            <div class="mb-3">
-              <div class="d-flex justify-content-between">
-                <label for="password" class="form-label">Password</label>
-                @if (Route::has('password.request'))
-                  <a href="{{ route('password.request') }}" class="small text-primary">Lupa password?</a>
-                @endif
-              </div>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                class="form-control @error('password') is-invalid @enderror"
-                required
-              >
-              @error('password')
-                <div class="invalid-feedback">{{ $message }}</div>
-              @enderror
-            </div>
-
-            <!-- Remember Me -->
-            <div class="mb-3 form-check">
-              <input type="checkbox" name="remember" class="form-check-input" id="remember" {{ old('remember') ? 'checked' : '' }}>
-              <label class="form-check-label" for="remember">Ingat saya</label>
-            </div>
-
-            <!-- Submit -->
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">
-                Masuk
-              </button>
-            </div>
-          </form>
-
-          <hr class="my-4">
-
-          <!-- Register link -->
-          @if (Route::has('register'))
-            <p class="text-center mb-0">
-              Belum punya akun? <a href="{{ route('register') }}">Daftar</a>
-            </p>
-          @endif
-
+      <!-- Email -->
+      <div class="form-group boxed">
+        <div class="input-wrapper">
+          <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                 placeholder="Email address" value="{{ old('email') }}" required autofocus>
+          <i class="clear-input"><ion-icon name="close-circle"></ion-icon></i>
+          @error('email')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
         </div>
       </div>
-    </div>
+
+      <!-- Password -->
+      <div class="form-group boxed">
+        <div class="input-wrapper">
+          <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                 placeholder="Password" required>
+          <i class="clear-input"><ion-icon name="close-circle"></ion-icon></i>
+          @error('password')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
+        </div>
+      </div>
+
+      <!-- Remember Me -->
+      <div class="form-group boxed mt-2">
+        <div class="input-wrapper d-flex align-items-center">
+          <input type="checkbox" name="remember" id="remember"
+                 class="me-2" {{ old('remember') ? 'checked' : '' }}>
+          <label for="remember" class="mb-0">Ingat saya</label>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="form-links mt-2 d-flex justify-content-between">
+        @if (Route::has('register'))
+          <a href="{{ route('register') }}">Daftar Sekarang</a>
+        @endif
+        @if (Route::has('password.request'))
+          <a href="{{ route('password.request') }}" class="text-muted">Lupa Password?</a>
+        @endif
+      </div>
+
+      <!-- Submit -->
+      <div class="form-button-group mt-3">
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Masuk</button>
+      </div>
+    </form>
   </div>
 </div>
 @endsection

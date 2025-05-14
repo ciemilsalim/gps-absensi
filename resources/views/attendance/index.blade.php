@@ -1,89 +1,99 @@
-@extends('layouts.app')
+@extends('layouts.user-app')
 
 @section('content')
-<div class="container">
-    <h3>Absensi GPS</h3>
-
-    {{-- Tampilkan notifikasi --}}
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <p id="gps-status" class="text-muted"></p>  
-
-    {{-- Tampilkan lokasi --}}
-    <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
-
-    {{-- Check-In Form --}}
-    <form id="checkin-form" method="POST" action="{{ route('attendance.checkin') }}">
-        @csrf
-        <input type="hidden" name="latitude" id="checkin-lat" title="Latitude lokasi check-in">
-        <input type="hidden" name="longitude" id="checkin-lng" title="longitude lokasi check-in">
-        <button type="submit" class="btn btn-success" id="btn-checkin">Check-In</button>
-    </form>
-
-    <br>
-
-    {{-- Check-Out Form --}}
-    <form id="checkout-form" method="POST" action="{{ route('attendance.checkout') }}">
-        @csrf
-        <input type="hidden" name="latitude" id="checkout-lat">
-        <input type="hidden" name="longitude" id="checkout-lng">
-        <button type="submit" class="btn btn-danger">Check-Out</button>
-    </form>
+<!-- App Header -->
+<div class="appHeader bg-primary text-light">
+    <div class="pageTitle">Absensi GPS</div>
+    <div class="right"></div>
 </div>
+<!-- * App Header -->
 
-<div class="container">
-    <h4>Data Absensi Saya</h4>
+<!-- App Capsule -->
+<div id="appCapsule" class="pb-5 pt-4">
+    <div class="section full mt-4">
+        {{-- Notifikasi --}}
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
 
-    @if ($attendances->isEmpty())
-        <p>Belum ada data absensi.</p>
-    @else
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Check-In</th>
-                    <th>Lokasi Check-In</th>
-                    <th>Check-Out</th>
-                    <th>Lokasi Check-Out</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($attendances as $attendance)
-                <tr>
-                    <td>{{ $attendance->date }}</td>
-                    <td>{{ $attendance->check_in_time ?? '-' }}</td>
-                    <td>
-                        {{ $attendance->check_in_lat ?? '-' }},
-                        {{ $attendance->check_in_lng ?? '-' }}
-                    </td>
-                    <td>{{ $attendance->check_out_time ?? '-' }}</td>
-                    <td>
-                        {{ $attendance->check_out_lat ?? '-' }},
-                        {{ $attendance->check_out_lng ?? '-' }}
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Status GPS --}}
+        <p id="gps-status" class="text-muted text-center"></p>
+
+        {{-- Peta --}}
+        <div id="map" style="height: 300px; margin-bottom: 20px;"></div>
+
+        {{-- Form Check-In --}}
+        <form id="checkin-form" method="POST" action="{{ route('attendance.checkin') }}">
+            @csrf
+            <input type="hidden" name="latitude" id="checkin-lat">
+            <input type="hidden" name="longitude" id="checkin-lng">
+            <button type="submit" class="btn btn-success btn-block mb-2">Check-In</button>
+        </form>
+
+        {{-- Form Check-Out --}}
+        <form id="checkout-form" method="POST" action="{{ route('attendance.checkout') }}">
+            @csrf
+            <input type="hidden" name="latitude" id="checkout-lat">
+            <input type="hidden" name="longitude" id="checkout-lng">
+            <button type="submit" class="btn btn-danger btn-block">Check-Out</button>
+        </form>
+
+        <!-- {{-- Tabel Absensi --}}
+        <div class="mt-4">
+            <h5 class="text-center">Data Absensi Saya</h5>
+            @if ($attendances->isEmpty())
+                <p class="text-center">Belum ada data absensi.</p>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Check-In</th>
+                                <th>Lokasi Check-In</th>
+                                <th>Check-Out</th>
+                                <th>Lokasi Check-Out</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($attendances as $attendance)
+                                <tr>
+                                    <td>{{ $attendance->date }}</td>
+                                    <td>{{ $attendance->check_in_time ?? '-' }}</td>
+                                    <td>{{ $attendance->check_in_lat ?? '-' }}, {{ $attendance->check_in_lng ?? '-' }}</td>
+                                    <td>{{ $attendance->check_out_time ?? '-' }}</td>
+                                    <td>{{ $attendance->check_out_lat ?? '-' }}, {{ $attendance->check_out_lng ?? '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div> -->
+    </div>
 </div>
+<!-- * App Capsule -->
+
+<!-- Bottom Nav -->
+@include('partials.bottom-nav')
 @endsection
 
+@push('styles')
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+@endpush
 
+@push('scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -98,35 +108,29 @@
     }
 
     function initMap(lat, lng) {
-        // Inisialisasi peta
-        const map = L.map('map').setView([1.1719015, 121.4259835], true); // posisi awal
+        const map = L.map('map').setView([lat, lng], 18);
 
-        // Buat ikon kustom
-            const pin = L.icon({
-                iconUrl: '/my-pin.png',
-                iconSize: [32, 32], // ukuran ikon [lebar, tinggi]
-                iconAnchor: [16, 32], // posisi titik bawah pin
-                popupAnchor: [0, -32] // posisi popup relatif terhadap ikon
-            });
-        
-        L.circle([1.1719015, 121.4259835], {
-                color: 'green',
-                fillColor: '#1bc6',
-                fillOpacity: 0.5,
-                radius: 100
-            }).addTo(map)
-            .bindPopup("Area Absensi.");
+        const pin = L.icon({
+            iconUrl: '/my-pin.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
 
-        // Tambahkan tile dari OpenStreetMap
+        L.circle([1.1870718, 121.4182081], {
+            color: 'green',
+            fillColor: '#1bc6',
+            fillOpacity: 0.5,
+            radius: 100
+        }).addTo(map).bindPopup("Area Absensi.");
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            attribution: '&copy; OpenStreetMap',
             maxZoom: 20,
-            minZoom: 18,})
-            .addTo(map);
+            minZoom: 18,
+        }).addTo(map);
 
-        
-        // Tambahkan marker ke lokasi user
-        marker = L.marker([lat, lng], {icon:pin} ).addTo(map)
+        marker = L.marker([lat, lng], { icon: pin }).addTo(map)
             .bindPopup("Lokasi Anda Saat Ini").openPopup();
     }
 
@@ -163,7 +167,4 @@
         }
     });
 </script>
-
-
-
-
+@endpush
