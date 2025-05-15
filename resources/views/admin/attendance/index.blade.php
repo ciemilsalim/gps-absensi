@@ -123,7 +123,6 @@
                 popupAnchor: [0, -32] // posisi popup relatif terhadap ikon
             });
 
-            //index admin cek git
 
             // Tambahkan tile layer OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
