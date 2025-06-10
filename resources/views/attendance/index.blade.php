@@ -37,7 +37,10 @@
             @csrf
             <input type="hidden" name="latitude" id="checkin-lat">
             <input type="hidden" name="longitude" id="checkin-lng">
-            <button type="submit" class="btn btn-success btn-block mb-2">Check-In</button>
+            <button type="submit" class="btn btn-success btn-block mb-2" 
+                {{ $hasCheckedIn ? 'disabled' : '' }}>
+                {{ $hasCheckedIn ? 'Sudah Check-In' : 'Check-In' }}
+            </button>
         </form>
 
         {{-- Form Check-Out --}}
@@ -45,7 +48,16 @@
             @csrf
             <input type="hidden" name="latitude" id="checkout-lat">
             <input type="hidden" name="longitude" id="checkout-lng">
-            <button type="submit" class="btn btn-danger btn-block">Check-Out</button>
+            <button type="submit" class="btn btn-danger btn-block" 
+                {{ !$hasCheckedIn ? 'disabled' : ($hasCheckedOut ? 'disabled' : '') }}>
+                @if (!$hasCheckedIn)
+                    Belum Check-In
+                @elseif ($hasCheckedOut)
+                    Sudah Check-Out
+                @else
+                    Check-Out
+                @endif
+            </button>
         </form>
 
         <!-- {{-- Tabel Absensi --}}
